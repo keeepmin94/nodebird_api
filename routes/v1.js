@@ -4,7 +4,7 @@ const {
   createToken,
   tokenTest,
   getMyPosts,
-  getPostByHashtag,
+  getPostsByHashtag,
 } = require("../controllers/v1");
 
 const router = express.Router();
@@ -16,6 +16,6 @@ router.get("/test", verifyToken, tokenTest);
 // 내 게시글 가져오는 API
 router.get("/posts/my", verifyToken, getMyPosts);
 // 관련 해시태그 게시물 가져오는 API
-router.get("/posts/hashtag/:title", verifyToken, getPostByHashtag);
+router.get("/posts/hashtag/:title", verifyToken, getPostsByHashtag);
 
 module.exports = router;
