@@ -1,4 +1,4 @@
-const Domain = require("../models/domain");
+const { Domain, Post, User, Hashtag } = require("../models");
 
 exports.createToken = async (req, res) => {
   const { clientSecret } = req.body; //클라이언트와 req.body.clientSecret를 넣기로 협의한 상황
@@ -40,4 +40,47 @@ exports.createToken = async (req, res) => {
 
 exports.tokenTest = async (req, res) => {
   res.json(res.locals.decoded);
+};
+
+exports.getMyPosts = (req, res) => {
+  Post.findAll({ where: { userId: res.locals.decoded.id } })
+    .then((posts) => {
+      console.log(posts);
+      res.json({
+        code: 200,
+        payload: posts,
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+      return res.status(500).json({
+        code: 500,
+        message: "서버 에러",
+      });
+    });
+};
+
+exports.getPostByHashtag = async (req, res) => {
+  try {
+    const hashtag = await Hashtag.findOne({
+      where: { title: req.params.title },
+    });
+    if (!hashtag) {
+      return res.status(404).json({
+        code: 404,
+        message: "검색 결과가 없습니다.",
+      });
+    }
+    const posts = await hashtag.getPost();
+    return res.json({
+      code: 200,
+      payload: posts,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      code: 500,
+      message: "서버 에러",
+    });
+  }
 };
