@@ -1,5 +1,5 @@
 const express = require("express");
-const { verifyToken, apiLimiter } = require("../middlewares");
+const { verifyToken, apiLimiter, corsWhenDomainMatches } = require("../middlewares");
 const {
   createToken,
   tokenTest,
@@ -8,6 +8,8 @@ const {
 } = require("../controllers/v2");
 
 const router = express.Router();
+
+router.use(corsWhenDomainMatches);
 
 // v1/token
 router.post("/token", apiLimiter, createToken);

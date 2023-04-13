@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const rateLimit = require("express-rate-limit");
-const { User } = require("../models");
+const { User, Domain } = require("../models");
+const cors = require("cors");
 
 exports.isLoggedIn = (req, res, next) => {
   // passport 통해서 로그인 했는지
@@ -66,4 +67,20 @@ exports.deprecated = (req, res) => {
     code: 410,
     message: "새로운 버전이 나왔습니다. 새로운 버전 이용 바랍니다",
   });
+};
+
+exports.corsWhenDomainMatches = async (req, res, next) => {
+  const domain = await Domain.findOne({
+    where: { host: new URL(req.get("origin")).host },
+  });
+  if (domain) {
+    //console.log("111");
+    cors({
+      origin: req.get("origin"),
+      credentials: true,
+    })(req, res, next);
+  } else {
+    //console.log("222");
+    next();
+  }
 };
