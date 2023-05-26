@@ -71,13 +71,13 @@ exports.deprecated = (req, res) => {
 
 exports.corsWhenDomainMatches = async (req, res, next) => {
   const domain = await Domain.findOne({
-    where: { host: new URL(req.get("origin")).host },
+    where: { host: new URL(req.get("origin")).host }, //new URL => http 떼기 
   });
   if (domain) {
     //console.log("111");
     cors({
       origin: req.get("origin"),
-      credentials: true,
+      credentials: true, //쿠키 요청 받기 , origin: * 일때는 못 씀
     })(req, res, next);
   } else {
     //console.log("222");
